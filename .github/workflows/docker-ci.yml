@@ -49,4 +49,4 @@ jobs:
       if: always()
       run: |
         docker stop sentiment-test
-        docker rm sentiment-test
+        docker rm -f sentiment-test || true
