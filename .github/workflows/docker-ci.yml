@@ -1,3 +1,50 @@
-git add .github/workflows/docker-ci.yml
-git commit -m "Add Docker CI pipeline"
-git push
+name: Docker CI
+
+on:
+  push: 
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps: 
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with: 
+        registry: ghcr.io
+        username: ${{github.actor}}
+        password: ${{secrets.GITHUB_TOKEN}}
+    
+    - name: Build Docker Image
+      run: |
+        IMAGE_NAME = ghcr.io/${{github.repository_owner}}/sentiment-api
+        docker build\
+          -t $IMAGE_NAME: latest \
+          -t $IMAGE_NAME: ${{github.sha}} \
+      
+    - name: Push Docker Image
+      run: |
+        IMAGE_NAME = ghcr.io/${{github.repository_owner}}/sentiment-api
+        docker run -d -p 8000:8000 --name sentiment-test $IMAGE_NAME: latest
+        sleep 10
+
+    - name: Health Checkout
+      run: |
+        curl --fail http://localhost:8000/health
+
+    -name: Cleanup
+      if: always()
+      run: |
+        docker stop sentiment-test
+        docker rm sentiment-test
+
