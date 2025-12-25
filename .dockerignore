@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+.env/
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+
+# OS junk
+.DS_Store
+
+# Logs
+*.log
+
+# Not needed in image
+mlruns/
+mlflow.db

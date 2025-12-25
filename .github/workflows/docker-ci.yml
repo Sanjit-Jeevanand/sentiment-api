@@ -1,0 +1,3 @@
+git add .github/workflows/docker-ci.yml
+git commit -m "Add Docker CI pipeline"
+git push
